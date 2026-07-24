@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>محطة التفتيش اللغوي 🕵️‍♂️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0b2a4a;
+    --navy-mid:#123a63;
+    --navy-soft:#1c4d80;
+    --gold:#d4a72c;
+    --gold-light:#f0c955;
+    --parchment:#faf3e4;
+    --parchment-dim:#efe4cc;
+    --ink:#22303f;
+    --ink-soft:#4d5c6c;
+    --success:#2f9c74;
+    --success-dark:#1f7357;
+    --danger:#c1443c;
+    --danger-dark:#96322c;
+    --cream-text:#f7efdd;
+    --radius:18px;
+    --shadow:0 18px 40px rgba(6,20,38,.35);
+    font-size:16px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+
+  body{
+    font-family:'Tajawal','Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 700px at 15% -10%, var(--navy-soft) 0%, transparent 60%),
+      radial-gradient(1000px 700px at 110% 110%, var(--navy-soft) 0%, transparent 55%),
+      var(--navy-deep);
+    color:var(--cream-text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    overflow-x:hidden;
+  }
+
+  .barrier-strip{
+    width:100%;
+    height:10px;
+    background:repeating-linear-gradient(45deg,
+      var(--gold) 0 18px,
+      var(--navy-mid) 18px 36px);
+    flex:0 0 auto;
+  }
+
+  .security-pattern{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.05;
+    background-image: repeating-linear-gradient(45deg, var(--gold) 0 1px, transparent 1px 26px);
+    z-index:0;
+  }
+
+  .app{
+    width:100%;
+    max-width:640px;
+    padding:18px 16px 40px;
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex:1;
+  }
+
+  header.topbar{
+    text-align:center;
+    margin:14px 0 10px;
+    width:100%;
+  }
+  .badge-icon{
+    font-size:2.4rem;
+    display:inline-block;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));
+  }
+  h1{
+    font-family:'Cairo',sans-serif;
+    font-weight:800;
+    font-size:clamp(1.5rem, 5vw, 2.1rem);
+    margin:6px 0 4px;
+    color:var(--gold-light);
+    letter-spacing:.5px;
+  }
+  .subtitle{
+    color:#cfe0f0;
+    font-size:.95rem;
+    margin:0;
+    opacity:.9;
+  }
+
+  .score-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(212,167,44,.15);
+    border:1px solid rgba(212,167,44,.5);
+    color:var(--gold-light);
+    padding:6px 14px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:.9rem;
+    margin-top:10px;
+  }
+
+  .progress-wrap{ width:100%; margin:18px 0 6px; }
+  .progress-track{
+    width:100%; height:10px;
+    background:rgba(255,255,255,.12);
+    border-radius:999px; overflow:hidden;
+    box-shadow:inset 0 2px 4px rgba(0,0,0,.3);
+  }
+  .progress-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+    border-radius:999px;
+    transition:width .5s ease;
+  }
+  .progress-label{
+    display:flex; justify-content:space-between;
+    font-size:.78rem; color:#bcd0e4; margin-top:6px;
+  }
+
+  .screen{ width:100%; display:none; }
+  .screen.active{ display:flex; flex-direction:column; align-items:center; }
+
+  .card{
+    background:var(--parchment);
+    color:var(--ink);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    width:100%;
+    padding:28px 22px;
+    position:relative;
+    border-top:6px solid var(--gold);
+  }
+
+  .start-card{ text-align:center; }
+  .start-card .stamp-preview{ font-size:3.4rem; margin-bottom:8px; }
+  .start-card h2{
+    font-family:'Cairo',sans-serif; font-size:1.3rem;
+    color:var(--navy-deep); margin:6px 0 10px;
+  }
+  .start-card p{ color:var(--ink-soft); line-height:1.9; font-size:.95rem; margin:0 0 18px; }
+  .bank-note{
+    background:var(--parchment-dim);
+    border-radius:12px;
+    padding:10px 14px;
+    font-size:.82rem;
+    color:var(--navy-deep);
+    font-weight:700;
+    margin:0 0 20px;
+  }
+  .rules-list{
+    text-align:right; list-style:none; padding:0; margin:0 0 24px;
+    display:grid; gap:10px;
+  }
+  .rules-list li{
+    background:var(--parchment-dim); border-radius:12px;
+    padding:10px 14px; font-size:.88rem; color:var(--ink);
+    display:flex; align-items:flex-start; gap:8px;
+  }
+
+  button{ font-family:inherit; cursor:pointer; border:none; }
+
+  .name-row{ margin:4px 0 22px; text-align:right; }
+  .name-row label{ display:block; font-size:.82rem; color:var(--ink-soft); margin-bottom:6px; font-weight:700; }
+  .name-input{
+    width:100%; padding:12px 14px; border-radius:12px;
+    border:2px solid #ddd1ab; font-size:1rem; font-family:inherit;
+    color:var(--ink); background:#fff;
+  }
+  .name-input:focus{ outline:none; border-color:var(--gold); }
+  .welcome-back{ font-size:.8rem; color:var(--success-dark); margin-top:8px; min-height:1.1em; font-weight:700; }
+
+  .btn-primary{
+    background:linear-gradient(180deg, var(--gold-light), var(--gold));
+    color:var(--navy-deep); font-weight:800; font-size:1.05rem;
+    padding:14px 34px; border-radius:999px;
+    box-shadow:0 10px 20px rgba(212,167,44,.35);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 26px rgba(212,167,44,.45); }
+  .btn-primary:active{ transform:translateY(0); }
+  .btn-primary:focus-visible{ outline:3px solid var(--cream-text); outline-offset:3px; }
+
+  .btn-ghost{
+    background:transparent; border:2px solid var(--navy-deep); color:var(--navy-deep);
+    font-weight:800; padding:11px 26px; border-radius:999px; font-size:.92rem;
+    transition:background .15s ease,color .15s ease;
+  }
+  .btn-ghost:hover{ background:var(--navy-deep); color:var(--gold-light); }
+  .btn-ghost:focus-visible{ outline:3px solid var(--navy-deep); outline-offset:3px; }
+
+  .btn-row{ display:flex; flex-direction:column; gap:10px; align-items:center; }
+
+  .question-topline{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .type-tag{
+    background:var(--navy-deep); color:var(--gold-light);
+    font-size:.75rem; font-weight:700; padding:5px 12px; border-radius:999px;
+  }
+  .q-index{ font-size:.8rem; color:var(--ink-soft); font-weight:700; }
+
+  .sentence-box{
+    background:#fff; border:1px dashed #c9b98a; border-radius:12px;
+    padding:20px 18px; font-size:clamp(1.05rem, 3.6vw, 1.25rem);
+    line-height:2.1; color:var(--ink); margin-bottom:20px; text-align:center;
+  }
+  .target-word{
+    color:var(--danger); font-weight:800;
+    border-bottom:2px dotted var(--danger); padding:0 2px; transition:all .3s ease;
+  }
+  .target-word.fixed{
+    color:var(--success-dark); border-bottom:2px solid var(--success);
+    background:rgba(47,156,116,.12); border-radius:6px;
+  }
+
+  .prompt-line{ text-align:center; color:var(--ink-soft); font-size:.85rem; margin:0 0 12px; font-weight:700; }
+
+  .options{ display:grid; gap:12px; margin-bottom:6px; }
+  .opt-btn{
+    background:#fff; border:2px solid #ddd1ab; border-radius:14px;
+    padding:14px 16px; font-size:1.05rem; font-weight:700; color:var(--ink);
+    text-align:center; transition:transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .opt-btn:hover:not(:disabled){ border-color:var(--gold); transform:translateY(-1px); }
+  .opt-btn:focus-visible{ outline:3px solid var(--navy-deep); outline-offset:2px; }
+  .opt-btn:disabled{ cursor:default; }
+  .opt-btn.wrong{ background:#fbe4e2; border-color:var(--danger); color:var(--danger-dark); animation:shake .4s ease; }
+  .opt-btn.correct{ background:#e2f4ec; border-color:var(--success); color:var(--success-dark); }
+  .opt-btn.reveal{ animation:pulseGlow 1.1s ease infinite; }
+
+  @keyframes shake{
+    10%,90%{ transform:translateX(-2px); }
+    20%,80%{ transform:translateX(4px); }
+    30%,50%,70%{ transform:translateX(-8px); }
+    40%,60%{ transform:translateX(8px); }
+  }
+  @keyframes pulseGlow{
+    0%,100%{ box-shadow:0 0 0 0 rgba(47,156,116,.5); }
+    50%{ box-shadow:0 0 0 8px rgba(47,156,116,0); }
+  }
+
+  .toast{
+    position:fixed; top:22px; left:50%; transform:translateX(-50%) translateY(-20px);
+    padding:12px 22px; border-radius:999px; font-weight:800; font-size:.9rem; color:#fff;
+    box-shadow:0 10px 24px rgba(0,0,0,.3); opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease; z-index:50; white-space:nowrap;
+    max-width:90vw; overflow:hidden; text-overflow:ellipsis;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast.success{ background:linear-gradient(180deg,var(--success),var(--success-dark)); }
+  .toast.danger{ background:linear-gradient(180deg,var(--danger),var(--danger-dark)); }
+  .toast.info{ background:linear-gradient(180deg,var(--navy-soft),var(--navy-deep)); }
+
+  .explain-overlay{
+    position:absolute; inset:0; background:rgba(250,243,228,.98);
+    border-radius:var(--radius); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:26px 22px;
+    opacity:0; visibility:hidden; transform:scale(.97);
+    transition:opacity .25s ease, transform .25s ease, visibility .25s;
+  }
+  .explain-overlay.show{ opacity:1; visibility:visible; transform:scale(1); }
+
+  .stamp{
+    width:120px; height:120px; border-radius:50%; border:4px solid currentColor;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:.95rem; line-height:1.3;
+    transform:rotate(-8deg); margin-bottom:16px; position:relative;
+    animation:stampIn .45s cubic-bezier(.2,1.4,.4,1);
+  }
+  .stamp::before{ content:""; position:absolute; inset:8px; border:2px dashed currentColor; border-radius:50%; }
+  .stamp.win{ color:var(--success-dark); }
+  .stamp.lose{ color:var(--danger-dark); }
+
+  @keyframes stampIn{
+    0%{ transform:rotate(-8deg) scale(2.4); opacity:0; }
+    60%{ transform:rotate(-8deg) scale(.92); opacity:1; }
+    100%{ transform:rotate(-8deg) scale(1); opacity:1; }
+  }
+
+  .explain-title{ font-family:'Cairo',sans-serif; font-weight:800; font-size:1.1rem; margin:0 0 10px; color:var(--navy-deep); }
+  .explain-text{ color:var(--ink-soft); font-size:.92rem; line-height:1.9; max-width:440px; margin:0 0 22px; }
+  .explain-text b{ color:var(--navy-deep); }
+
+  .btn-next{
+    background:var(--navy-deep); color:var(--gold-light); font-weight:800;
+    padding:12px 30px; border-radius:999px; font-size:.98rem; transition:transform .15s ease;
+  }
+  .btn-next:hover{ transform:translateY(-2px); }
+  .btn-next:focus-visible{ outline:3px solid var(--gold); outline-offset:3px; }
+
+  .end-card{ text-align:center; }
+  .end-stamp{
+    width:150px; height:150px; margin:0 auto 18px; border-radius:50%;
+    border:5px solid var(--gold); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; color:var(--navy-deep); position:relative;
+    animation:stampIn .5s cubic-bezier(.2,1.4,.4,1);
+    background:radial-gradient(circle, #fff8e8 0%, var(--parchment) 100%);
+  }
+  .end-stamp::before{ content:""; position:absolute; inset:9px; border:2px dashed var(--gold); border-radius:50%; }
+  .end-stamp .medal-emoji{ font-size:2.4rem; }
+  .end-stamp .medal-name{ font-family:'Cairo',sans-serif; font-weight:800; font-size:.85rem; margin-top:2px; }
+
+  .end-card h2{ font-family:'Cairo',sans-serif; color:var(--navy-deep); font-size:1.4rem; margin:4px 0 6px; }
+  .final-score{
+    font-family:'Cairo',sans-serif; font-size:2.2rem; font-weight:800; color:var(--gold-light);
+    background:var(--navy-deep); display:inline-block; padding:8px 26px; border-radius:14px; margin:10px 0 16px;
+  }
+  .end-message{ color:var(--ink-soft); font-size:.95rem; line-height:1.8; margin:0 0 22px; }
+
+  /* ===== لوحة التقدم ===== */
+  .dash-card{ text-align:right; }
+  .dash-header{ text-align:center; margin-bottom:18px; }
+  .dash-header .badge-icon{ font-size:2rem; }
+  .dash-header h2{ font-family:'Cairo',sans-serif; color:var(--navy-deep); font-size:1.25rem; margin:4px 0; }
+  .dash-name{ color:#b5860f; font-weight:800; }
+
+  .stat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:8px; }
+  .stat-box{ background:var(--parchment-dim); border-radius:12px; padding:12px 8px; text-align:center; }
+  .stat-box .num{ font-family:'Cairo',sans-serif; font-weight:800; font-size:1.4rem; color:var(--navy-deep); display:block; }
+  .stat-box .lbl{ font-size:.7rem; color:var(--ink-soft); }
+
+  .section-heading{ font-family:'Cairo',sans-serif; font-weight:800; color:var(--navy-deep); font-size:1rem; margin:22px 0 10px; }
+
+  .mini-chart{ display:flex; align-items:flex-end; gap:6px; height:80px; background:var(--parchment-dim); border-radius:12px; padding:10px; }
+  .mini-bar{ flex:1; background:linear-gradient(180deg,var(--gold-light),var(--gold)); border-radius:4px 4px 0 0; min-height:4px; }
+  .mini-chart-empty, .weak-empty{ font-size:.82rem; color:var(--ink-soft); text-align:center; padding:18px 0; }
+
+  .mastery-row{ margin-bottom:12px; }
+  .mastery-top{ display:flex; justify-content:space-between; font-size:.82rem; color:var(--ink); margin-bottom:4px; font-weight:700; }
+  .mastery-track{ height:9px; background:#e7dcc0; border-radius:999px; overflow:hidden; }
+  .mastery-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg,var(--success),var(--success-dark)); transition:width .5s ease; }
+
+  .weak-list{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+  .weak-list li{ background:#fbe4e2; border-radius:10px; padding:8px 12px; font-size:.85rem; color:var(--danger-dark); display:flex; justify-content:space-between; }
+
+  .dash-actions{ display:flex; flex-direction:column; gap:10px; margin-top:24px; }
+  .btn-danger-ghost{
+    background:transparent; border:2px solid var(--danger); color:var(--danger-dark);
+    font-weight:700; padding:10px 20px; border-radius:999px; font-size:.85rem;
+  }
+  .btn-danger-ghost:hover{ background:var(--danger); color:#fff; }
+
+  footer.credit{ margin-top:20px; font-size:.72rem; color:#8fa8c2; text-align:center; padding-bottom:6px; }
+
+  @media (max-width:480px){
+    .card{ padding:22px 16px; }
+    .rules-list li{ font-size:.82rem; }
+    .opt-btn{ font-size:.98rem; padding:12px 14px; }
+    .stamp{ width:100px; height:100px; font-size:.85rem; }
+    .end-stamp{ width:130px; height:130px; }
+    .stat-box .num{ font-size:1.15rem; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barrier-strip" aria-hidden="true"></div>
+<div class="security-pattern" aria-hidden="true"></div>
+
+<div class="app">
+
+  <header class="topbar">
+    <span class="badge-icon">🕵️‍♂️</span>
+    <h1>محطة التفتيش اللغوي</h1>
+    <p class="subtitle">افحص الجملة، اكتشف خطأ الهمزة، وصوّبها لتحصل على وسام الفصاحة</p>
+  </header>
+
+  <!-- ===== شاشة البداية ===== -->
+  <section id="screen-start" class="screen active">
+    <div class="card start-card">
+      <div class="stamp-preview">🛂</div>
+      <h2>أهلًا بك أيها المفتش اللغوي</h2>
+      <p>ستمر بجولة تفتيش، في كل نقطة جملة تحتوي على خطأ في كتابة الهمزة (المتوسطة أو المتطرفة). مهمتك اختيار الصياغة الصحيحة.</p>
+      <p class="bank-note">🗂️ يضم بنك الأسئلة 100 جملة، وتُختار لك 20 جملة مختلفة عشوائيًا في كل مرة تلعب فيها.</p>
+
+      <div class="name-row">
+        <label for="studentName">اسمك (لحفظ تقدّمك على هذا الجهاز):</label>
+        <input type="text" id="studentName" class="name-input" placeholder="اكتب اسمك هنا" list="nameSuggestions" autocomplete="off">
+        <datalist id="nameSuggestions"></datalist>
+        <div class="welcome-back" id="welcomeBack"></div>
+      </div>
+
+      <ul class="rules-list">
+        <li>🔎 اقرأ الجملة جيدًا ولاحظ الكلمة التي تحتها خط أحمر.</li>
+        <li>✅ اختر الشكل الصحيح للكلمة من بين ثلاثة خيارات.</li>
+        <li>📖 بعد كل إجابة ستظهر لك القاعدة الإملائية بشكل مبسّط.</li>
+        <li>🏅 أنهِ التفتيش بنجاح لتحصل على وسام الفصاحة.</li>
+      </ul>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="startBtn">ابدأ التفتيش اللغوي</button>
+        <button class="btn-ghost" id="dashBtnStart">📊 لوحة تقدمي</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== شاشة الأسئلة ===== -->
+  <section id="screen-quiz" class="screen">
+    <div class="score-chip">🏅 النقاط: <span id="scoreVal">0</span></div>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label">
+        <span id="progressText">السؤال ١ من ٢٠</span>
+        <span>محطة التفتيش</span>
+      </div>
+    </div>
+
+    <div class="card" id="questionCard">
+      <div class="question-topline">
+        <span class="type-tag" id="typeTag">همزة متوسطة</span>
+        <span class="q-index" id="qIndex">١ / ٢٠</span>
+      </div>
+
+      <div class="sentence-box" id="sentenceBox"></div>
+      <p class="prompt-line">اختر الصياغة الصحيحة للكلمة المخطوطة:</p>
+      <div class="options" id="optionsBox"></div>
+
+      <div class="explain-overlay" id="explainOverlay">
+        <div class="stamp" id="stampEl"></div>
+        <h3 class="explain-title" id="explainTitle"></h3>
+        <p class="explain-text" id="explainText"></p>
+        <button class="btn-next" id="nextBtn">التالي</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== شاشة النهاية ===== -->
+  <section id="screen-end" class="screen">
+    <div class="card end-card">
+      <div class="end-stamp">
+        <span class="medal-emoji">🏅</span>
+        <span class="medal-name">وسام الفصاحة</span>
+      </div>
+      <h2 id="endHeadline">أحسنت أيها المفتش!</h2>
+      <div class="final-score"><span id="finalScore">0</span> / <span id="finalTotal">20</span></div>
+      <p class="end-message" id="endMessage"></p>
+      <div class="btn-row">
+        <button class="btn-primary" id="restartBtn">إعادة التفتيش</button>
+        <button class="btn-ghost" id="dashBtnEnd">📊 لوحة تقدمي</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== لوحة التقدم ===== -->
+  <section id="screen-dash" class="screen">
+    <div class="card dash-card">
+      <div class="dash-header">
+        <span class="badge-icon">📊</span>
+        <h2>سجل تقدّم <span class="dash-name" id="dashName">المفتش</span></h2>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-box"><span class="num" id="statGames">0</span><span class="lbl">جولات التفتيش</span></div>
+        <div class="stat-box"><span class="num" id="statBest">0</span><span class="lbl">أفضل نتيجة</span></div>
+        <div class="stat-box"><span class="num" id="statAvg">0</span><span class="lbl">متوسط النتائج</span></div>
+      </div>
+
+      <h3 class="section-heading">آخر المحاولات</h3>
+      <div id="miniChartWrap"><div class="mini-chart-empty">لا توجد محاولات مسجّلة بعد.</div></div>
+
+      <h3 class="section-heading">مستوى الإتقان حسب القاعدة</h3>
+      <div id="masteryWrap"></div>
+
+      <h3 class="section-heading">كلمات تحتاج مراجعة</h3>
+      <div id="weakWrap"><div class="weak-empty">العب جولة تفتيش ليظهر لك هذا القسم.</div></div>
+
+      <div class="dash-actions">
+        <button class="btn-primary" id="playFromDashBtn">ابدأ جولة تفتيش</button>
+        <button class="btn-ghost" id="backFromDashBtn">⬅️ رجوع</button>
+        <button class="btn-danger-ghost" id="resetProgressBtn">🗑️ تصفير تقدّمي</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="credit">محطة التفتيش اللغوي — تدريب على همزتي التوسط والتطرف (بنك من 100 سؤال)</footer>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ بنك الأسئلة (100 سؤال) ============
+     كل عنصر: [رمز_القاعدة, الصياغة_الصحيحة, "جملة تحتوي على {w} في مكان الكلمة"] */
+  const RAW = [
+    // ==== همزة متوسطة - الكسرة أقوى (نبرة) - M1 ====
+    ['M1','سئل','{w} الطالبُ عن سبب غيابه أمس.'],
+    ['M1','فئة','ينتمي هذا الطالب إلى {w} المتفوقين.'],
+    ['M1','البئر','نزل الفلاح إلى {w} ليستخرج الماء البارد.'],
+    ['M1','الرئة','تعمل {w} على تنقية الدم من ثاني أكسيد الكربون.'],
+    ['M1','الذئب','عوى {w} في الغابة المظلمة.'],
+    ['M1','مطمئن','شعر المريض بأنه {w} بعد زيارة الطبيب.'],
+    ['M1','رئيس','التقى {w} المدرسة بأولياء الأمور.'],
+    ['M1','مئذنة','ارتفع صوت الأذان من {w} المسجد.'],
+    ['M1','هيئة','شكّلت المدرسة {w} لتنظيم الرحلة.'],
+    ['M1','دائرة','رسم المعلم {w} على السبورة لشرح الدرس.'],
+    ['M1','قائد','كان {w} الفريق يشجع زملاءه بحماس.'],
+    ['M1','العائلة','اجتمعت {w} في العطلة الصيفية.'],
+    ['M1','الفائز','استلم {w} جائزته أمام الجمهور.'],
+    ['M1','جائزة','حصلت الطالبة على {w} التفوق.'],
+    ['M1','زائرًا','استقبلت المدرسة {w} من وزارة التربية.'],
+    ['M1','الدائم','يحرص المعلم على التواصل {w} مع الطلاب.'],
+    ['M1','سائل','تحوّل الجليد إلى {w} بعد ذوبانه.'],
+
+    // ==== همزة متوسطة - الضمة أقوى (واو) - M2 ====
+    ['M2','يؤمّ','{w} الإمامُ المصلين في الصلوات الخمس.'],
+    ['M2','رؤوفًا','كان المعلم {w} بطلابه الصغار.'],
+    ['M2','المؤمن','{w} الحق يصدق قوله فعله.'],
+    ['M2','بشؤون','تُعنى هذه الدائرة {w} الطلاب.'],
+    ['M2','سؤالًا','طرح الطالب {w} مهمًا على المعلم.'],
+    ['M2','رؤية','تحدث المدير عن {w} المدرسة المستقبلية.'],
+    ['M2','بؤرة','أصبحت هذه المنطقة {w} للنشاط الزراعي.'],
+    ['M2','بالتفاؤل','يواجه الفريق التحديات {w} دائمًا.'],
+    ['M2','المؤتمر','عُقد {w} التربوي في العاصمة.'],
+    ['M2','المؤسسة','تدعم هذه {w} الطلاب المتفوقين.'],
+    ['M2','رؤساء','اجتمع {w} الأقسام لمناقشة الخطة الجديدة.'],
+    ['M2','فؤاد','امتلأ {w} الأم بالفرح لنجاح ابنها.'],
+    ['M2','كؤوس','وُزعت {w} العصير على الضيوف.'],
+    ['M2','بؤس','روت القصة حكاية {w} وفقر ثم انتصار.'],
+    ['M2','رؤوس','عدّ المزارع {w} الأغنام في الحظيرة.'],
+    ['M2','التشاؤم','حذّر المعلم من {w} عند مواجهة الصعوبات.'],
+    ['M2','المؤرخ','كتب {w} عن أحداث المدينة القديمة.'],
+
+    // ==== همزة متوسطة - فتحة أو سكون فقط (ألف) - M3 ====
+    ['M3','سأل','{w} الطالبُ معلمه عن موعد الامتحان.'],
+    ['M3','رأس','أصاب الصداع {w} الطفل بعد اللعب الطويل.'],
+    ['M3','فأرًا','اصطاد القط {w} صغيرًا في الحديقة.'],
+    ['M3','المسألة','حلّ الطالب {w} الرياضية بسرعة.'],
+    ['M3','يسأل','{w} الفضوليون كثيرًا عن كل شيء جديد.'],
+    ['M3','تأخرت','{w} الحافلة المدرسية اليوم بسبب الازدحام.'],
+    ['M3','فجأة','توقفت السيارة {w} أمام الإشارة الحمراء.'],
+    ['M3','برأفة','عامل القاضي المتهم الصغير {w}.'],
+    ['M3','يتأمل','جلس الشاعر {w} جمال الطبيعة.'],
+    ['M3','مرأى','وقعت الحادثة على {w} من الجميع.'],
+    ['M3','لليأس','لم يستسلم الرياضي {w} بعد الخسارة.'],
+    ['M3','بأس','لا {w} عليك، الخطأ وارد ويمكن تصحيحه.'],
+    ['M3','تأثير','كان لكلمات المعلم {w} كبير في نفوس الطلاب.'],
+    ['M3','تأكيد','أعاد المدير {w} أهمية الحضور المبكر.'],
+    ['M3','يأتي','{w} فصل الشتاء بعد الخريف مباشرة.'],
+    ['M3','تأليف','شارك الطالب في مسابقة {w} القصص القصيرة.'],
+
+    // ==== همزة متطرفة - ما قبلها مفتوح (ألف) - F1 ====
+    ['F1','خطأً','ارتكب التلميذ {w} كبيرًا في حل المسألة.'],
+    ['F1','بدأ','{w} الدرس في تمام الساعة الثامنة.'],
+    ['F1','قرأ','{w} الطالب القصة كاملة في المكتبة.'],
+    ['F1','نشأ','{w} الكاتب في قرية صغيرة قرب البحر.'],
+    ['F1','ملأ','{w} الطالب دفتره بالملاحظات المفيدة.'],
+    ['F1','هدأ','{w} البحر بعد انتهاء العاصفة.'],
+    ['F1','لجأ','{w} الطلاب إلى القاعة هربًا من المطر.'],
+    ['F1','نبأ','وصل {w} فوز الفريق إلى المدرسة بسرعة.'],
+    ['F1','بظمأ','شعر المسافر {w} شديد بعد الرحلة الطويلة.'],
+    ['F1','بمبدأ','يؤمن المعلم {w} الإنصاف بين الطلاب.'],
+    ['F1','منشأ','بحث الطالب عن {w} هذه العادة القديمة.'],
+    ['F1','مرفأ','رست السفينة في {w} المدينة الساحلية.'],
+    ['F1','ملجأ','وجد القط {w} دافئًا تحت السلم.'],
+    ['F1','توضأ','{w} الطالب استعدادًا لصلاة الظهر.'],
+    ['F1','تهيأ','{w} الفريق جيدًا قبل بداية المباراة.'],
+    ['F1','ابتدأ','{w} المعلم الحصة بمراجعة سريعة.'],
+    ['F1','تبرأ','{w} الشاهد من كل تهمة ملفقة.'],
+
+    // ==== همزة متطرفة - ما قبلها مضموم (واو) - F2 ====
+    ['F2','يجرؤ','لا {w} أحد على الغش في امتحان هذا المعلم.'],
+    ['F2','يبطؤ','{w} نمو النبات في الأجواء الباردة.'],
+    ['F2','التكافؤ','نادى المدرب بضرورة {w} بين فرق المدرسة.'],
+    ['F2','التباطؤ','لاحظ المعلم بعض {w} في أداء الطالب.'],
+    ['F2','تواطؤ','رفض الحكم أي شبهة {w} بين اللاعبين.'],
+    ['F2','التبرؤ','أعلن الفريق {w} من أي سلوك غير رياضي.'],
+
+    // ==== همزة متطرفة - ما قبلها مكسور (نبرة) - F3 ====
+    ['F3','الشاطئ','جلس الصيادون على {w} ينتظرون عودة القوارب.'],
+    ['F3','قارئًا','أصبح الطفل {w} نهمًا للقصص.'],
+    ['F3','البارئ','الله سبحانه هو {w} المصوّر.'],
+    ['F3','هادئ','يفضّل الطالب الدراسة في مكان {w}.'],
+    ['F3','دافئًا','لبس الطفل معطفًا {w} في الشتاء.'],
+    ['F3','طارئ','اجتمع المعلمون لبحث أمر {w} في المدرسة.'],
+    ['F3','ناشئ','شارك لاعب {w} في بطولة المدرسة.'],
+    ['F3','بادئ','كان {w} ذي بدء متحمسًا للمشروع.'],
+    ['F3','مبتدئًا','ما زال هذا اللاعب {w} في كرة القدم.'],
+    ['F3','لاجئ','درس طفل {w} في مدرسة الحي الجديدة.'],
+    ['F3','متكئًا','جلس الجد {w} على وسادة في الحديقة.'],
+    ['F3','الخاطئ','صحّح المعلم جواب الطالب {w} بلطف.'],
+    ['F3','سيئًا','ترك الغش أثرًا {w} في نتيجة الطالب.'],
+
+    // ==== همزة متطرفة - ما قبلها ساكن أو حرف مدّ (على السطر) - F4 ====
+    ['F4','جزءًا','قرأ الطالب {w} من القصة قبل النوم.'],
+    ['F4','عبء','خفف المعلمون عن الطلاب {w} الواجبات.'],
+    ['F4','بالدفء','شعر الأطفال {w} داخل الصف في الشتاء.'],
+    ['F4','بطء','لاحظ المدرب {w} اللاعب في الجري.'],
+    ['F4','ملء','طلب المعلم {w} الاستمارة بعناية.'],
+    ['F4','ضوء','أضاء {w} القمر الطريق ليلًا.'],
+    ['F4','سوء','نتج الخطأ عن {w} فهم بسيط.'],
+    ['F4','جاء','{w} المدير لزيارة الصف صباحًا.'],
+    ['F4','بناء','شارك الطلاب في {w} نموذج للمدرسة.'],
+    ['F4','دواءه','أخذ المريض {w} في الموعد المحدد.'],
+    ['F4','غذاء','يحتاج الجسم إلى {w} متوازن يوميًا.'],
+    ['F4','السماء','لاحظ الطلاب النجوم في {w} ليلًا.'],
+    ['F4','شيئًا','لم يفهم الطالب {w} من الدرس في البداية.'],
+    ['F4','بريء','أثبتت التحقيقات أن الطالب {w} من التهمة.']
+  ];
+
+  const RULE_TYPE  = {M1:'medial',M2:'medial',M3:'medial',F1:'final',F2:'final',F3:'final',F4:'final'};
+  const TYPE_LABEL = {medial:'همزة متوسطة', final:'همزة متطرفة'};
+
+  const RULE_LABEL = {
+    M1:'متوسطة – الكسرة أقوى (نبرة)',
+    M2:'متوسطة – الضمة أقوى (واو)',
+    M3:'متوسطة – فتحة/سكون فقط (ألف)',
+    F1:'متطرفة – ما قبلها مفتوح (ألف)',
+    F2:'متطرفة – ما قبلها مضموم (واو)',
+    F3:'متطرفة – ما قبلها مكسور (نبرة)',
+    F4:'متطرفة – ما قبلها ساكن/مدّ (السطر)'
+  };
+
+  const EXPLAIN = {
+    M1:'الهمزة هنا <b>متوسطة</b>، وتوجد كسرة إما في حركة الهمزة نفسها أو في حركة الحرف الذي قبلها، والكسرة أقوى الحركات جميعًا، فتُكتب الهمزة على <b>ياء (نبرة)</b>: {c}.',
+    M2:'الهمزة هنا <b>متوسطة</b>، ولا كسرة في حركتيها، لكن توجد ضمة (في الهمزة أو فيما قبلها) وهي الأقوى بينهما، فتُكتب الهمزة على <b>واو</b>: {c}.',
+    M3:'الهمزة هنا <b>متوسطة</b>، وحركتاها لا تتجاوزان الفتحة والسكون، فتُكتب الهمزة على <b>ألف</b>: {c}.',
+    F1:'الهمزة هنا <b>متطرفة</b>، وما قبلها حرف <b>مفتوح</b>، فتُكتب الهمزة على <b>ألف</b>: {c}.',
+    F2:'الهمزة هنا <b>متطرفة</b>، وما قبلها حرف <b>مضموم</b>، فتُكتب الهمزة على <b>واو</b>: {c}.',
+    F3:'الهمزة هنا <b>متطرفة</b>، وما قبلها حرف <b>مكسور</b>، فتُكتب الهمزة على <b>ياء (نبرة)</b>: {c}.',
+    F4:'الهمزة هنا <b>متطرفة</b>، وما قبلها حرف <b>ساكن</b> أو حرف مدّ (ألف/واو/ياء)، فتُكتب الهمزة مفردة على <b>السطر</b>: {c}.'
+  };
+
+  const QUESTIONS = RAW.map((r,i) => ({
+    id: String(i),
+    rule: r[0],
+    type: RULE_TYPE[r[0]],
+    correct: r[1],
+    template: r[2]
+  }));
+
+  const SESSION_SIZE = 20;
+  const SEATS = ['أ','ؤ','ئ','ء'];
+
+  function findHamzaChar(word){
+    for(let i=0;i<SEATS.length;i++){ if(word.indexOf(SEATS[i]) !== -1) return SEATS[i]; }
+    return null;
+  }
+
+  function makeVariants(correctWord){
+    const seatChar = findHamzaChar(correctWord);
+    if(!seatChar){ return {wrong: correctWord, distractor: correctWord}; }
+    const alts = shuffle(SEATS.filter(s => s !== seatChar));
+    return {
+      wrong: correctWord.replace(seatChar, alts[0]),
+      distractor: correctWord.replace(seatChar, alts[1])
+    };
+  }
+
+  const AR_NUM = ["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
+  function toArabicDigits(n){
+    return String(n).split("").map(ch => /[0-9]/.test(ch) ? AR_NUM[ch] : ch).join("");
+  }
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  /* ============ التخزين والتقدم عبر الجلسات ============ */
+  const STORAGE_PREFIX = "lughawi_checkpoint_v1::";
+  const NAMES_KEY = STORAGE_PREFIX + "__names__";
+  let storageOK = true;
+
+  function defaultProfile(){
+    return { gamesPlayed: 0, bestScore: 0, history: [], wordStats: {} };
+  }
+
+  function loadProfile(name){
+    try{
+      const raw = localStorage.getItem(STORAGE_PREFIX + name);
+      return raw ? JSON.parse(raw) : defaultProfile();
+    } catch(e){
+      storageOK = false;
+      return defaultProfile();
+    }
+  }
+
+  function saveProfile(name, profile){
+    try{
+      localStorage.setItem(STORAGE_PREFIX + name, JSON.stringify(profile));
+      return true;
+    } catch(e){
+      if(storageOK){
+        storageOK = false;
+        showToast("تعذّر حفظ التقدم في هذا المتصفح، سيستمر اللعب دون حفظ", "info");
+      }
+      return false;
+    }
+  }
+
+  function rememberName(name){
+    try{
+      const raw = localStorage.getItem(NAMES_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      if(list.indexOf(name) === -1){ list.push(name); }
+      localStorage.setItem(NAMES_KEY, JSON.stringify(list));
+      localStorage.setItem(STORAGE_PREFIX + "__lastName__", name);
+    } catch(e){ /* تجاهل بصمت */ }
+  }
+
+  function getKnownNames(){
+    try{
+      const raw = localStorage.getItem(NAMES_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e){ return []; }
+  }
+
+  function getLastName(){
+    try{ return localStorage.getItem(STORAGE_PREFIX + "__lastName__") || ""; }
+    catch(e){ return ""; }
+  }
+
+  /* ============ اختيار 20 سؤالًا (عشوائي مع تكيّف بسيط حسب نقاط الضعف) ============ */
+  function pickSessionQuestions(profile){
+    const all = QUESTIONS.map(q => ({ q: q, id: q.id }));
+    const weak = [];
+    const strong = [];
+
+    all.forEach(item => {
+      const st = profile.wordStats[item.id];
+      const seen = st ? st.seen : 0;
+      const rate = (st && st.seen > 0) ? (st.correctFirst / st.seen) : 0;
+      if(seen === 0 || rate < 0.6){ weak.push(item); } else { strong.push(item); }
+    });
+
+    const shuffledWeak = shuffle(weak);
+    const shuffledStrong = shuffle(strong);
+
+    const weakTake = Math.min(shuffledWeak.length, Math.ceil(SESSION_SIZE * 0.7));
+    let selected = shuffledWeak.slice(0, weakTake);
+
+    const pool = shuffle(shuffledStrong.concat(shuffledWeak.slice(weakTake)));
+    selected = selected.concat(pool.slice(0, SESSION_SIZE - selected.length));
+
+    if(selected.length < SESSION_SIZE){
+      const usedIds = {};
+      selected.forEach(s => usedIds[s.id] = true);
+      const fillPool = shuffle(all.filter(a => !usedIds[a.id]));
+      selected = selected.concat(fillPool.slice(0, SESSION_SIZE - selected.length));
+    }
+
+    return shuffle(selected).slice(0, SESSION_SIZE).map(item => item.q);
+  }
+
+  /* ============ عناصر الصفحة ============ */
+  const screenStart = document.getElementById("screen-start");
+  const screenQuiz  = document.getElementById("screen-quiz");
+  const screenEnd   = document.getElementById("screen-end");
+  const screenDash  = document.getElementById("screen-dash");
+
+  const studentNameInput = document.getElementById("studentName");
+  const nameSuggestions  = document.getElementById("nameSuggestions");
+  const welcomeBack      = document.getElementById("welcomeBack");
+
+  const startBtn      = document.getElementById("startBtn");
+  const restartBtn     = document.getElementById("restartBtn");
+  const nextBtn        = document.getElementById("nextBtn");
+  const dashBtnStart   = document.getElementById("dashBtnStart");
+  const dashBtnEnd     = document.getElementById("dashBtnEnd");
+  const backFromDashBtn= document.getElementById("backFromDashBtn");
+  const playFromDashBtn= document.getElementById("playFromDashBtn");
+  const resetProgressBtn = document.getElementById("resetProgressBtn");
+
+  const scoreVal      = document.getElementById("scoreVal");
+  const progressFill  = document.getElementById("progressFill");
+  const progressText  = document.getElementById("progressText");
+  const typeTag        = document.getElementById("typeTag");
+  const qIndexEl       = document.getElementById("qIndex");
+  const sentenceBox    = document.getElementById("sentenceBox");
+  const optionsBox     = document.getElementById("optionsBox");
+  const explainOverlay = document.getElementById("explainOverlay");
+  const stampEl        = document.getElementById("stampEl");
+  const explainTitle   = document.getElementById("explainTitle");
+  const explainText    = document.getElementById("explainText");
+  const toastEl        = document.getElementById("toastEl");
+
+  const endHeadline = document.getElementById("endHeadline");
+  const finalScore  = document.getElementById("finalScore");
+  const finalTotal  = document.getElementById("finalTotal");
+  const endMessage  = document.getElementById("endMessage");
+
+  const dashName    = document.getElementById("dashName");
+  const statGames   = document.getElementById("statGames");
+  const statBest    = document.getElementById("statBest");
+  const statAvg     = document.getElementById("statAvg");
+  const miniChartWrap = document.getElementById("miniChartWrap");
+  const masteryWrap   = document.getElementById("masteryWrap");
+  const weakWrap       = document.getElementById("weakWrap");
+
+  let currentName = "";
+  let profile = defaultProfile();
+  let sessionQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let wrongAttempts = 0;
+  let locked = false;
+  let toastTimer = null;
+
+  function showScreen(el){
+    [screenStart, screenQuiz, screenEnd, screenDash].forEach(s => s.classList.remove("active"));
+    el.classList.add("active");
+  }
+
+  function showToast(message, kind){
+    clearTimeout(toastTimer);
+    toastEl.textContent = message;
+    toastEl.className = "toast show " + kind;
+    toastTimer = setTimeout(() => { toastEl.classList.remove("show"); }, 2200);
+  }
+
+  function getActiveName(){
+    const typed = studentNameInput.value.trim();
+    return typed || "الطالب";
+  }
+
+  function refreshNameSuggestions(){
+    nameSuggestions.innerHTML = "";
+    getKnownNames().forEach(n => {
+      const opt = document.createElement("option");
+      opt.value = n;
+      nameSuggestions.appendChild(opt);
+    });
+  }
+
+  function updateWelcomeBack(){
+    const name = studentNameInput.value.trim();
+    if(!name){ welcomeBack.textContent = ""; return; }
+    const p = loadProfile(name);
+    if(p.gamesPlayed > 0){
+      welcomeBack.textContent = "👋 أهلًا بعودتك يا " + name + "! أفضل نتيجة سابقة: " + toArabicDigits(p.bestScore) + " / " + toArabicDigits(SESSION_SIZE) + ".";
+    } else {
+      welcomeBack.textContent = "";
+    }
+  }
+
+  /* ============ منطق اللعب ============ */
+  function loadQuestion(index){
+    const q = sessionQuestions[index];
+    locked = false;
+    wrongAttempts = 0;
+
+    typeTag.textContent = TYPE_LABEL[q.type];
+    qIndexEl.textContent = toArabicDigits(index + 1) + " / " + toArabicDigits(sessionQuestions.length);
+    progressText.textContent = "السؤال " + toArabicDigits(index + 1) + " من " + toArabicDigits(sessionQuestions.length);
+    progressFill.style.width = ((index) / sessionQuestions.length * 100) + "%";
+
+    const variants = makeVariants(q.correct);
+
+    sentenceBox.innerHTML = q.template.replace(
+      "{w}",
+      '<span class="target-word" id="targetWord">' + variants.wrong + '</span>'
+    );
+
+    const opts = shuffle([q.correct, variants.wrong, variants.distractor]);
+    optionsBox.innerHTML = "";
+    opts.forEach(optText => {
+      const btn = document.createElement("button");
+      btn.className = "opt-btn";
+      btn.type = "button";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => handleAnswer(btn, optText, q));
+      optionsBox.appendChild(btn);
+    });
+
+    explainOverlay.classList.remove("show");
+  }
+
+  function recordWordStat(id, correctFirstTry){
+    if(!profile.wordStats[id]){ profile.wordStats[id] = { seen: 0, correctFirst: 0 }; }
+    profile.wordStats[id].seen++;
+    if(correctFirstTry){ profile.wordStats[id].correctFirst++; }
+    saveProfile(currentName, profile);
+  }
+
+  function handleAnswer(btn, optText, q){
+    if(locked) return;
+
+    if(optText === q.correct){
+      locked = true;
+      btn.classList.add("correct");
+      Array.from(optionsBox.children).forEach(b => b.disabled = true);
+
+      const firstTry = (wrongAttempts === 0);
+      if(firstTry){ score++; scoreVal.textContent = toArabicDigits(score); }
+      recordWordStat(q.id, firstTry);
+
+      showToast(firstTry ? "أحسنت! إجابة صحيحة ✅" : "تمام، هذه هي الصياغة الصحيحة ✅", "success");
+
+      const targetWord = document.getElementById("targetWord");
+      if(targetWord){
+        targetWord.textContent = q.correct;
+        targetWord.classList.add("fixed");
+      }
+
+      setTimeout(() => {
+        stampEl.className = "stamp win";
+        stampEl.textContent = firstTry ? "قُبِل ✅" : "صحيح الآن";
+        explainTitle.textContent = firstTry ? "إجابة صحيحة!" : "الصياغة الصحيحة";
+        explainText.innerHTML = EXPLAIN[q.rule].replace("{c}", "<b>" + q.correct + "</b>");
+        nextBtn.textContent = (currentIndex === sessionQuestions.length - 1) ? "عرض النتيجة" : "التالي";
+        explainOverlay.classList.add("show");
+      }, 550);
+
+    } else {
+      wrongAttempts++;
+      btn.classList.add("wrong");
+      btn.disabled = true;
+      showToast("إجابة غير صحيحة، حاول مرة أخرى ❌", "danger");
+
+      const remaining = Array.from(optionsBox.children).filter(b => !b.disabled);
+      if(remaining.length === 1){
+        setTimeout(() => { remaining[0].classList.add("reveal"); }, 350);
+      }
+    }
+  }
+
+  function goNext(){
+    explainOverlay.classList.remove("show");
+    if(currentIndex < sessionQuestions.length - 1){
+      currentIndex++;
+      loadQuestion(currentIndex);
+    } else {
+      progressFill.style.width = "100%";
+      showEndScreen();
+    }
+  }
+
+  function showEndScreen(){
+    const total = sessionQuestions.length;
+    profile.gamesPlayed++;
+    profile.bestScore = Math.max(profile.bestScore, score);
+    profile.history.push({ date: new Date().toISOString(), score: score, total: total });
+    if(profile.history.length > 10){ profile.history = profile.history.slice(-10); }
+    saveProfile(currentName, profile);
+
+    finalScore.textContent = toArabicDigits(score);
+    finalTotal.textContent = toArabicDigits(total);
+
+    let headline, message;
+    if(score === total){
+      headline = "تفتيش مثالي! 🏅";
+      message = "لقد اجتزت جميع نقاط التفتيش من أول محاولة. إتقانك لهمزتي التوسط والتطرف يستحق وسام الفصاحة الذهبي.";
+    } else if(score >= Math.ceil(total * 0.6)){
+      headline = "أداء موثوق أيها المفتش";
+      message = "نتيجة جيدة جدًا! راجع القواعد التي أخطأت فيها قليلًا من لوحة تقدمك، ثم أعد التفتيش لتحصل على العلامة الكاملة.";
+    } else {
+      headline = "استمر في التدريب";
+      message = "كل مفتش لغوي محترف بدأ بمحاولات متعددة. راجع لوحة تقدمك لمعرفة القواعد الأضعف، ثم أعد الكرّة.";
+    }
+    endHeadline.textContent = headline;
+    endMessage.textContent = message;
+    showScreen(screenEnd);
+  }
+
+  function beginSession(){
+    currentName = getActiveName();
+    rememberName(currentName);
+    refreshNameSuggestions();
+    profile = loadProfile(currentName);
+    sessionQuestions = pickSessionQuestions(profile);
+    currentIndex = 0;
+    score = 0;
+    scoreVal.textContent = "٠";
+    loadQuestion(0);
+    showScreen(screenQuiz);
+  }
+
+  /* ============ لوحة التقدم ============ */
+  function renderDashboard(){
+    const name = studentNameInput.value.trim() || getLastName() || "الطالب";
+    const p = loadProfile(name);
+    dashName.textContent = name;
+
+    statGames.textContent = toArabicDigits(p.gamesPlayed);
+    statBest.textContent = toArabicDigits(p.bestScore) + "/" + toArabicDigits(SESSION_SIZE);
+    const avg = p.history.length ? Math.round(p.history.reduce((s,h)=>s+h.score,0) / p.history.length) : 0;
+    statAvg.textContent = toArabicDigits(avg) + "/" + toArabicDigits(SESSION_SIZE);
+
+    if(p.history.length === 0){
+      miniChartWrap.innerHTML = '<div class="mini-chart-empty">لا توجد محاولات مسجّلة بعد. ابدأ جولة تفتيش الآن!</div>';
+    } else {
+      const bars = p.history.map(h => {
+        const pct = Math.max(6, Math.round((h.score / h.total) * 100));
+        const d = new Date(h.date);
+        const label = d.getDate() + "/" + (d.getMonth()+1);
+        return '<div class="mini-bar" style="height:' + pct + '%" title="' + label + ': ' + h.score + '/' + h.total + '"></div>';
+      }).join("");
+      miniChartWrap.innerHTML = '<div class="mini-chart">' + bars + '</div>';
+    }
+
+    const ruleGroups = {};
+    Object.keys(RULE_LABEL).forEach(r => { ruleGroups[r] = { seen: 0, correct: 0 }; });
+    QUESTIONS.forEach(q => {
+      const st = p.wordStats[q.id];
+      if(st){
+        ruleGroups[q.rule].seen += st.seen;
+        ruleGroups[q.rule].correct += st.correctFirst;
+      }
+    });
+    masteryWrap.innerHTML = Object.keys(RULE_LABEL).map(r => {
+      const g = ruleGroups[r];
+      const pct = g.seen > 0 ? Math.round((g.correct / g.seen) * 100) : 0;
+      return (
+        '<div class="mastery-row">' +
+          '<div class="mastery-top"><span>' + RULE_LABEL[r] + '</span><span>' + (g.seen>0 ? toArabicDigits(pct)+'٪' : 'لم يُختبر بعد') + '</span></div>' +
+          '<div class="mastery-track"><div class="mastery-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>'
+      );
+    }).join("");
+
+    const weakEntries = QUESTIONS
+      .map(q => ({ q: q, st: p.wordStats[q.id] }))
+      .filter(e => e.st && e.st.seen > 0)
+      .map(e => ({ q: e.q, rate: e.st.correctFirst / e.st.seen, seen: e.st.seen }))
+      .filter(e => e.rate < 0.6)
+      .sort((a,b) => a.rate - b.rate)
+      .slice(0, 6);
+
+    if(weakEntries.length === 0){
+      weakWrap.innerHTML = '<div class="weak-empty">لا توجد كلمات ضعيفة مسجّلة حتى الآن — استمر في التدريب!</div>';
+    } else {
+      weakWrap.innerHTML = '<ul class="weak-list">' + weakEntries.map(e =>
+        '<li><span>' + e.q.correct + '</span><span>' + toArabicDigits(Math.round(e.rate*100)) + '٪</span></li>'
+      ).join("") + '</ul>';
+    }
+  }
+
+  /* ============ ربط الأحداث ============ */
+  startBtn.addEventListener("click", beginSession);
+  playFromDashBtn.addEventListener("click", beginSession);
+
+  nextBtn.addEventListener("click", goNext);
+
+  restartBtn.addEventListener("click", beginSession);
+
+  dashBtnStart.addEventListener("click", () => { renderDashboard(); showScreen(screenDash); });
+  dashBtnEnd.addEventListener("click", () => { renderDashboard(); showScreen(screenDash); });
+  backFromDashBtn.addEventListener("click", () => showScreen(screenStart));
+
+  resetProgressBtn.addEventListener("click", () => {
+    const name = studentNameInput.value.trim() || getLastName() || "الطالب";
+    const ok = confirm("هل تريد فعلًا تصفير كل تقدم \"" + name + "\"؟ لا يمكن التراجع عن هذا الإجراء.");
+    if(ok){
+      profile = defaultProfile();
+      saveProfile(name, profile);
+      renderDashboard();
+      showToast("تم تصفير التقدم", "info");
+    }
+  });
+
+  studentNameInput.addEventListener("input", updateWelcomeBack);
+
+  /* ============ التهيئة الأولى ============ */
+  refreshNameSuggestions();
+  const lastName = getLastName();
+  if(lastName){
+    studentNameInput.value = lastName;
+    updateWelcomeBack();
+  }
+
+})();
+</script>
+
+</body>
+</html>
